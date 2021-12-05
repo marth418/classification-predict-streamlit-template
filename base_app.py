@@ -21,15 +21,19 @@
 	https://docs.streamlit.io/en/latest/
 
 """
-# Streamlit dependencies
-import streamlit as st
-import joblib
+# Dependnecies
 
-# Data dependencies
 import pandas as pd
+import numpy as np
+import pickle 
+import joblib,os
+import re
+import streamlit as st
+from PIL import Image
+from sklearn.feature_extraction.text import CountVectorizer
 
 # Vectorizer
-vectorizer = open("resources/CountVect.pkl","rb")
+vectorizer = open("resources/CountVect1","rb")
 tweet_cv = joblib.load(vectorizer) # loading your vectorizer from the pkl file
 
 # Load your raw data
@@ -65,7 +69,7 @@ def main():
 		# Creating a text box for user input
 		tweet_text = st.text_area("Enter Text","Type Here")
 
-		if st.button("Classify"):
+		if st.button("Predict"):
 			# Transforming user input with vectorizer
 			vect_text = tweet_cv.transform([tweet_text]).toarray()
 			# Load your .pkl file with the model of your choice + make predictions
