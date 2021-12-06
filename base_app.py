@@ -21,20 +21,64 @@
 	https://docs.streamlit.io/en/latest/
 
 """
-# Dependnecies
-
+# Streamlit dependencies
+import streamlit as st
+import joblib, os
 import pandas as pd
 import numpy as np
 import pickle 
-import joblib,os
 import re
-import streamlit as st
-from PIL import Image
 from sklearn.feature_extraction.text import CountVectorizer
 
+
 # Vectorizer
-vectorizer = open("resources/CountVect1","rb")
-tweet_cv = joblib.load(vectorizer) # loading your vectorizer from the pkl file
+# Vectorizer
+vectorizer = open("resources/CountVectoriser1.pkl","rb")
+tweet_cv = joblib.load(vectorizer)  # loading your vectorizer from the pkl file
+
+# Pickled model
+predictor = open("resources/LogisticClassifier.pkl","rb")
+logistic_pred = pickle.load(predictor)
+
+
+st.markdown(
+    """
+<style>
+.reportview-container .markdown-text-container {
+    font-family: monospace;
+}
+.sidebar .sidebar-content {
+    background-image: linear-gradient(#2e7bcf,#2e7bcf);
+    color: white;
+}
+.Widget>label {
+    color: blue;
+    font-family: monospace;
+}
+[class^="st-b"]  {
+    color: black;
+    font-family: monospace;
+}
+.st-bb {
+    background-color: lightblue;
+}
+.st-at {
+    background-color: ligtblue;
+}
+footer {
+    font-family: monospace;
+}
+.reportview-container .main footer, .reportview-container .main footer a {
+    color: white;
+}
+header .decoration {
+    background-image: none;
+}
+
+</style>
+""",
+    unsafe_allow_html=True,
+)
 
 # Load your raw data
 raw = pd.read_csv("resources/train.csv")
@@ -45,9 +89,8 @@ def main():
 
 	# Creates a main title and subheader on your page -
 	# these are static across all pages
-	st.title("Tweet Classifer")
-	st.subheader("Climate change tweet classification")
-
+	st.markdown("<h1 style='text-align: center; color: lightblue; font-size: 20;'>Tweet Sentiment Classifier: Climate Change</h1>", unsafe_allow_html=True)
+	 
 	# Creating sidebar with selection box -
 	# you can create multiple pages this way
 	options = ["Prediction", "Information"]
@@ -67,14 +110,14 @@ def main():
 	if selection == "Prediction":
 		st.info("Prediction with ML Models")
 		# Creating a text box for user input
-		tweet_text = st.text_area("Enter Text","Type Here")
+		tweet_text = st.text_area("Tweet to Predict","Type Here")
 
 		if st.button("Predict"):
 			# Transforming user input with vectorizer
 			vect_text = tweet_cv.transform([tweet_text]).toarray()
 			# Load your .pkl file with the model of your choice + make predictions
 			# Try loading in multiple models to give the user a choice
-			predictor = joblib.load(open(os.path.join("resources/LogisticClassifier.pkl"),"rb"))
+			predictor = joblib.load(open(os.path.join("resources/LogregClass1.pkl"),"rb"))
 			prediction = predictor.predict(vect_text)
 
 			# When model has successfully run, will print prediction
